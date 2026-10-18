@@ -60,6 +60,8 @@ def main():
             raise SystemExit(1)
     elif args.command == "rebuild":
         repo.rebuild()
+        if repo.cache_warning:
+            parser.exit(1, "本地缓存重建失败；云端历史未受影响，请检查磁盘后重试。\n")
         print("本地七天缓存已重建")
     elif args.command in ("export", "restore"):
         if not args.file:

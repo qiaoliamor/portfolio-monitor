@@ -142,3 +142,32 @@ def test_lease_can_renew_only_for_current_owner(repo):
     assert not repo.renew("report", "second")
     repo.cloud.batch([("UPDATE locks SET expires_at=0 WHERE id='report'", ())])
     assert not repo.renew("report", "first")
+
+
+def test_bulk_history_does_not_query_settings_per_row(repo, monkeypatch):
+    from datetime import date, timedelta
+    rows = [quote((date(2026, 10, 18) - timedelta(days=i)).isoformat()) for i in range(100)]
+    original = repo.cloud.query
+    calls = []
+    def counting_query(sql, args=()):
+        if "FROM settings" in sql:
+            calls.append(sql)
+        return original(sql, args)
+    monkeypatch.setattr(repo.cloud, "query", counting_query)
+    repo.save_quotes(rows)
+    assert len(calls) <= 2  # Batch cutoff plus final cleanup, independent of row count.
+    calls.clear()
+    assert len(repo.history("us:AAPL", "2026-01-01", "2026-10-18")) == 100
+    assert len(calls) == 1
+
+
+def test_corrupt_cache_reads_fall_back_to_authority(repo, monkeypatch):
+    import sqlite3
+    repo.save_quotes([quote("2026-10-18")])
+    repo.save_report("2026-10-18", {"day": "2026-10-18", "value": 100})
+    def broken_query(*args):
+        raise sqlite3.DatabaseError("malformed cache")
+    monkeypatch.setattr(repo.cache, "query", broken_query)
+    assert repo.recent("us:AAPL")[0]["value"] == 100
+    assert repo.cache_warning
+    assert repo.report("2026-10-18")["value"] == 100

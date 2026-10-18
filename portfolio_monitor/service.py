@@ -9,8 +9,9 @@ log = logging.getLogger(__name__)
 
 
 def seed(repo):
+    existing = {p["id"] for p in repo.products()}
     for p in CATALOG:
-        if p["overview"] and p["id"] not in {x["id"] for x in repo.products()}:
+        if p["overview"] and p["id"] not in existing:
             repo.add_product(p)
     if repo.config.demo and not repo.watchlist():
         for p in CATALOG:

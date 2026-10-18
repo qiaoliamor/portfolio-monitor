@@ -151,30 +151,43 @@ class Repository:
         self._cache(statements)
 
     def save_quotes(self, quotes):
+        cutoff = self.cutoff()
         sql = "INSERT OR REPLACE INTO quotes VALUES (?,?,?,?,?,?)"
         statements = [(sql, tuple(q[c] for c in COLUMNS["quotes"])) for q in quotes]
         self.cloud.batch(statements)
         self._cache([s for s, q in zip(statements, quotes, strict=True)
-                     if q["day"] >= self.cutoff()])
+                     if q["day"] >= cutoff])
         self.prune()
 
     def history(self, product_id, start, end):
+        cutoff = self.cutoff()
         # Query authority to detect holes/corrections; cache only the recent subset.
         rows = self.cloud.query(
             "SELECT * FROM quotes WHERE product_id=? AND day>=? AND day<=? ORDER BY day",
             (product_id, start, end))
         self._cache([("INSERT OR REPLACE INTO quotes VALUES (?,?,?,?,?,?)",
                       tuple(q[c] for c in COLUMNS["quotes"]))
-                     for q in rows if q["day"] >= self.cutoff()])
+                     for q in rows if q["day"] >= cutoff])
         return rows
 
+    def _cached_query(self, sql, args=()):
+        if self.cache_warning:
+            return []
+        try:
+            return self.cache.query(sql, args)
+        except (sqlite3.Error, OSError):
+            self.cache_warning = True
+            log.warning("Local cache read failed; falling back to cloud")
+            return []
+
     def recent(self, product_id):
-        rows = self.cache.query(
+        cutoff = self.cutoff()
+        rows = self._cached_query(
             "SELECT * FROM quotes WHERE product_id=? AND day>=? ORDER BY day",
-            (product_id, self.cutoff()))
-        if rows and not self.cache_warning:
+            (product_id, cutoff))
+        if rows:
             return rows
-        return self.history(product_id, self.cutoff(), self.today().isoformat())
+        return self.history(product_id, cutoff, self.today().isoformat())
 
     def save_report(self, day, payload):
         # Reports are immutable snapshots, even on repeated manual collection.
@@ -189,7 +202,7 @@ class Repository:
 
     def report(self, day):
         if day >= self.cutoff() and not self.cache_warning:
-            cached = self.cache.query("SELECT payload FROM reports WHERE day=?", (day,))
+            cached = self._cached_query("SELECT payload FROM reports WHERE day=?", (day,))
             if cached:
                 return json.loads(cached[0]["payload"])
         rows = self.cloud.query("SELECT payload FROM reports WHERE day=?", (day,))
