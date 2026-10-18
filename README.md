@@ -43,7 +43,7 @@ DEMO_MODE=true uv run portfolio serve
 
 ## 云端部署与调度
 
-参见 [部署说明](docs/DEPLOYMENT.md)。仓库包含 Dockerfile、Render Blueprint、CI 与半小时检查到期的 GitHub Actions。
+仓库包含 Dockerfile、`render.yaml`、CI 与半小时检查到期的 GitHub Actions。使用 Render Blueprint 部署Docker服务，配置数据库凭证、登录密码哈希、会话密钥及所需行情密钥；生产设置 `APP_ENV=production`、`DEMO_MODE=false`。
 
 - 网页与任务连接同一个 Turso 库，不依赖电脑在线。
 - `REPORTS_ENABLED=true` 仓库变量启用工作流；网页设置再启用定时，并选择 IANA 时区及时间，默认 `Asia/Tokyo` / `09:00` / 关闭。
@@ -69,11 +69,8 @@ uv run ruff check .
 
 ## 当前交付边界
 
-代码可本地演示和自动测试；真实Turso往返、云端部署及受密钥保护的行情，需要你自己的账号和凭证才能验收。未连接真实云端时不会悄悄降级到本地历史库。完整验证记录见 [状态与验收](docs/STATUS.md)。
+代码可本地演示和自动测试；真实Turso往返、云端部署及受密钥保护的行情，需要你自己的账号和凭证才能验收。未连接真实云端时不会悄悄降级到本地历史库。真实外部服务验收尚未完成。
 
-## 开发记录与进度
+## 本地开发文档
 
-- [进度与 To-do List](TODO.md)：已完成、下一阶段及尚未实现的功能。
-- [模块说明](docs/MODULES.md)：代码入口、数据表、职责与访问约定。
-- [执行过的主要命令](docs/COMMAND_HISTORY.md)：安装、初始化、验证与同步记录。
-- [实施与验收](docs/STATUS.md)：区分本地验证和真实服务验收。
+开发记录、模块设计及待办清单保存在本地 `docs/`，该目录不纳入Git版本管理。进度统一维护于本地 `docs/TODO.md`。
