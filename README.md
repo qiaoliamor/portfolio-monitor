@@ -74,3 +74,13 @@ uv run ruff check .
 ## 本地开发文档
 
 开发记录、模块设计及待办清单保存在本地 `docs/`，该目录不纳入Git版本管理。进度统一维护于本地 `docs/TODO.md`。
+
+## 开发看板
+
+[Portfolio Monitor 开发看板](https://github.com/users/qiaoliamor/projects/2) 关联本仓库，包含 Details that Need Attention、Todo、In Progress、Done 和 Note。看板默认私有，由仓库所有者管理。
+
+- 新建 Issue / PR 自动加入看板并进入 Todo；Issue 模板要求目标、阶段和验收标准。
+- PR 正文使用 `Closes #编号` 关联本仓库 Issue，关联任务自动进入 In Progress；合并到默认分支后 Issue 关闭并进入 Done，PR 也进入 Done。
+- Issue 关闭进入 Done；重新打开进入 Todo。纯说明使用 Note，阻塞与风险放入 Details that Need Attention。
+- 自动流转由 Project 内置 Workflows 执行，无需额外 Project 访问令牌。普通提交或本地开始写代码不会自动改变状态，可手动拖动卡片。
+- Done 只代表卡片声明的范围完成；本地实现与真实数据源、云端部署验收分开跟踪。不要在公开 Issue / PR 放入密钥或私人数据。
