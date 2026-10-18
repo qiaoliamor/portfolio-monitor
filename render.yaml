@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: portfolio-monitor
+    runtime: docker
+    plan: free
+    healthCheckPath: /healthz
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DEMO_MODE
+        value: 'false'
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: TWELVE_DATA_API_KEY
+        sync: false
+      - key: TUSHARE_TOKEN
+        sync: false
+      - key: FRED_API_KEY
+        sync: false

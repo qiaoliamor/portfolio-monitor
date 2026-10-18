@@ -1,0 +1,26 @@
+[project]
+name = "portfolio-monitor"
+version = "0.1.0"
+description = "Daily market brief with SQLite cache and libSQL history"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "fastapi>=0.115,<1", "uvicorn>=0.34,<1", "jinja2>=3.1,<4",
+  "python-multipart>=0.0.20", "httpx>=0.28,<1", "itsdangerous>=2.2,<3",
+  "python-dotenv>=1,<2", "libsql>=0.1.11,<1"
+]
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.11,<1"]
+[project.scripts]
+portfolio = "portfolio_monitor.cli:main"
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+[tool.hatch.build.targets.wheel]
+packages = ["portfolio_monitor"]
+[tool.ruff]
+line-length = 100
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

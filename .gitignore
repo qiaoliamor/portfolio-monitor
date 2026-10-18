@@ -9,3 +9,12 @@ reports/
 __pycache__/
 .venv/
 node_modules/
+.uv-cache/
+.pytest_cache/
+.ruff_cache/
+*.db
+*.db-*
+*.sqlite*
+backups/
+.coverage
+*.egg-info/

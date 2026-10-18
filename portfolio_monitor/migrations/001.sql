@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS schema_versions (version INTEGER PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS products (
+ id TEXT PRIMARY KEY, payload TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS watchlist (
+ product_id TEXT PRIMARY KEY
+);
+CREATE TABLE IF NOT EXISTS settings (
+ id TEXT PRIMARY KEY, payload TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS quotes (
+ product_id TEXT NOT NULL, metric TEXT NOT NULL, day TEXT NOT NULL,
+ source TEXT NOT NULL, value REAL NOT NULL, fetched_at TEXT NOT NULL,
+ PRIMARY KEY (product_id, metric, day, source)
+);
+CREATE INDEX IF NOT EXISTS quotes_day ON quotes(day);
+CREATE TABLE IF NOT EXISTS reports (
+ day TEXT PRIMARY KEY, payload TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS runs (
+ id TEXT PRIMARY KEY, day TEXT NOT NULL, payload TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS locks (
+ id TEXT PRIMARY KEY, owner TEXT NOT NULL, expires_at REAL NOT NULL
+);
+INSERT OR IGNORE INTO schema_versions(version) VALUES (1);
