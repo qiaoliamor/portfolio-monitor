@@ -1,0 +1,39 @@
+name: 开发任务
+description: 为 Portfolio Monitor 创建有验收标准的任务
+title: "[P3] "
+body:
+  - type: markdown
+    attributes:
+      value: "请勿填写 API 密钥、数据库令牌、私人持仓或本地开发文档。任务会自动加入 Project。"
+  - type: dropdown
+    id: phase
+    attributes:
+      label: 阶段
+      options:
+        - P0 项目基础与管理
+        - P1 数据与报告核心
+        - P2 网页与部署配置
+        - P3 真实数据源验收
+        - P4 上线与无人值守
+        - P5 后续完善
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: 目标与范围
+      description: 描述完成后的具体行为，明确是本地实现还是外部服务验收。
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收标准
+      placeholder: "- [ ] 可观察、可验证的完成条件"
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 前置条件
+      description: 关联 Issue、账号或权限要求；不要填写凭证本身。
