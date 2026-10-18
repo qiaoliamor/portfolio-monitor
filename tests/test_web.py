@@ -57,3 +57,12 @@ def test_production_requires_password_and_stable_secret(repo):
     repo.config.demo = False
     with pytest.raises(ValueError, match="SESSION_SECRET"):
         create_app(repo.config, repo=repo)
+
+
+def test_healthcheck_marks_unconfigured_database_unready(tmp_path):
+    from portfolio_monitor.config import Config
+    config = Config(cache_path=str(tmp_path / "cache.db"), secret="test-secret")
+    with TestClient(create_app(config)) as client:
+        result = client.get("/healthz")
+        assert result.status_code == 503
+        assert result.json()["status"] == "unconfigured"

@@ -9,7 +9,7 @@ from urllib.parse import quote
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from fastapi import FastAPI, Form, HTTPException, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -92,7 +92,8 @@ def create_app(config=None, repo=None, market=None):
 
     @app.get("/healthz")
     def health():
-        return {"status": "ok" if state["repo"] else "unconfigured", "demo": config.demo}
+        return JSONResponse({"status": "ok" if state["repo"] else "unconfigured", "demo": config.demo},
+                            status_code=200 if state["repo"] else 503)
 
     @app.get("/login", response_class=HTMLResponse)
     def login_page(request: Request):
