@@ -1,0 +1,11 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+data/private/
+holdings.local.*
+reports/
+*.log
+__pycache__/
+.venv/
+node_modules/
