@@ -6,6 +6,7 @@ data/private/
 holdings.local.*
 reports/
 *.log
+/logs/
 __pycache__/
 .venv/
 node_modules/
